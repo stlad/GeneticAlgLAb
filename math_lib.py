@@ -25,3 +25,7 @@ def grid_index_to_global(model, index):
     a = model.interval[0]
     global_pos = a + (model.grid_step * index + (model.grid_step / 2))
     return global_pos
+
+def gene_to_global_coords(model, gene):
+    index_x = grey_to_num(gene)
+    return grid_index_to_global(model, index_x)
