@@ -1,5 +1,5 @@
-
-
+import random
+import model as md
 
 def num_to_grey_code(num):
     return num ^ (num >> 1)
@@ -29,3 +29,21 @@ def grid_index_to_global(model, index):
 def gene_to_global_coords(model, gene):
     index_x = grey_to_num(gene)
     return grid_index_to_global(model, index_x)
+
+
+def cross_individs(model, first, sec):
+    gap_point = gap = random.randint(1, model.grid_count-1)
+
+    a = format(first.gene, 'b')
+    b = format(sec.gene, 'b')
+
+    a1 = a[:gap] + b[gap:]
+    b1 = b[:gap] + a[gap:]
+
+    new_a_ind = md.Individ(int(a1,2))
+    #new_a_ind.make_func(model)
+
+    new_b_ind = md.Individ(int(b1, 2))
+    #new_b_ind.make_func(int(b1,2))
+
+    return (new_a_ind, new_b_ind)

@@ -1,6 +1,6 @@
 import random
 import math_lib as ml
-
+import copy
 
 class Model:
     def __init__(self, pop_count, grid_count, func, interval):
@@ -11,22 +11,36 @@ class Model:
         self.grey_nums = ml.get_grey_codes(grid_count)
         self.interval = (interval[0], interval[1])
         self.grid_step = (interval[1] - interval[0])/(2**grid_count)
+        self.PR_CROSSOVER = 0.5
+        self.PR_MUTATION = 0.1
 
     def get_start_population(self):
         #self.current_population = [Individ(i,self.function(i)) for i in range(self.population_count)] # предварительно
         for i in range(self.population_count):
             x = random.randint(0,2**self.grid_count-1)
-            global_x = ml.grid_index_to_global(self, x)
+            '''global_x = ml.grid_index_to_global(self, x)
 
             ind_x = self.grey_nums[x]
             ind_y = self.function(global_x)
 
-            self.current_population.append(Individ(ind_x, ind_y))
+            self.current_population.append(Individ(ind_x, ind_y))'''
+            ind_gene = self.grey_nums[x]
+            ind = Individ(ind_gene)
+            ind.make_func(self)
+
+            self.current_population.append(ind)
 
     def next(self):
-        pass
+        next_generation = []
+        next_generation = self.selection(3)
+        next_generation = self.crossover(next_generation)
 
-    def selection(self, t = 2): # турнирный отбор
+        for i in next_generation:
+            i.make_func(self)
+
+        return next_generation
+
+    def selection(self, t=2): # турнирный отбор
         winners = []
         for i in range(self.population_count):
             rand_indexies = []
@@ -34,12 +48,16 @@ class Model:
                 rand_indexies.append(random.randint(0,self.population_count-1))
 
             tour = [self.current_population[g] for g in rand_indexies]
-            winners.append(get_best_fit_individ(tour))
+            winners.append(copy.copy(get_best_fit_individ(tour)))
 
         return winners
 
-    def crossing(self):
-        pass
+    def crossover(self, pop):
+        for child1, child2 in list(zip(pop[::2], pop[1::2])):
+            if random.random() < self.PR_CROSSOVER:
+                child1, child2 = ml.cross_individs(self, child1, child2)
+
+        return pop
 
     def mutation(self):
         pass
@@ -51,9 +69,16 @@ class Model:
 
 
 class Individ:
-    def __init__(self, gene, y):
+    def __init__(self, gene):
         self.gene = gene
-        self.fitness = y
+        #self.fitness = y
+
+
+    def make_func(self, model):
+        global_x = ml.gene_to_global_coords(model, self.gene)
+        self.fitness = model.function(global_x)
+
+
 
 
 def get_best_fit_individ(population):
