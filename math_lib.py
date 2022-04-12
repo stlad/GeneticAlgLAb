@@ -47,3 +47,20 @@ def cross_individs(model, first, sec):
     #new_b_ind.make_func(int(b1,2))
 
     return (new_a_ind, new_b_ind)
+
+
+def mutate(model, ind):
+    gene = a = list(format(ind.gene,'b'))
+
+    for i in range(len(gene)):
+        if random.random() < 1.0/len(gene):
+            if gene[i] == '1':
+                gene[i] = '0'
+            else:
+                gene[i] = '1'
+
+    mutated_gene = int(''.join(gene),2)
+    ind.gene = mutated_gene
+    return
+
+

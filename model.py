@@ -13,6 +13,7 @@ class Model:
         self.grid_step = (interval[1] - interval[0])/(2**grid_count)
         self.PR_CROSSOVER = 0.5
         self.PR_MUTATION = 0.1
+        self.generation_number = 1
 
     def get_start_population(self):
         #self.current_population = [Individ(i,self.function(i)) for i in range(self.population_count)] # предварительно
@@ -34,11 +35,15 @@ class Model:
         next_generation = []
         next_generation = self.selection(3)
         next_generation = self.crossover(next_generation)
+        self.mutation(next_generation)
 
         for i in next_generation:
             i.make_func(self)
 
-        return next_generation
+        self.generation_number += 1
+
+        self.current_population = next_generation
+        return
 
     def selection(self, t=2): # турнирный отбор
         winners = []
@@ -59,8 +64,11 @@ class Model:
 
         return pop
 
-    def mutation(self):
-        pass
+    def mutation(self, pop):
+        for mutant in pop:
+            if random.random() < self.PR_MUTATION:
+                ml.mutate(self, mutant)
+        return
 
 
 
