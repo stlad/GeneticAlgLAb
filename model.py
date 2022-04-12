@@ -1,7 +1,5 @@
 import random
-
 import math_lib as ml
-import random as rnd
 
 
 class Model:
@@ -14,7 +12,6 @@ class Model:
         self.interval = (interval[0], interval[1])
         self.grid_step = (interval[1] - interval[0])/(2**grid_count)
 
-
     def get_start_population(self):
         #self.current_population = [Individ(i,self.function(i)) for i in range(self.population_count)] # предварительно
         for i in range(self.population_count):
@@ -26,6 +23,26 @@ class Model:
 
             self.current_population.append(Individ(ind_x, ind_y))
 
+    def next(self):
+        pass
+
+    def selection(self, t = 2): # турнирный отбор
+        winners = []
+        for i in range(self.population_count):
+            rand_indexies = []
+            for j in range(t):
+                rand_indexies.append(random.randint(0,self.population_count-1))
+
+            tour = [self.current_population[g] for g in rand_indexies]
+            winners.append(get_best_fit_individ(tour))
+
+        return winners
+
+    def crossing(self):
+        pass
+
+    def mutation(self):
+        pass
 
 
 
@@ -36,10 +53,14 @@ class Model:
 class Individ:
     def __init__(self, gene, y):
         self.gene = gene
-        self.y = y
+        self.fitness = y
 
 
+def get_best_fit_individ(population):
+    best = (population[0], population[0].fitness)
+    for ind in population:
+        if ind.fitness <= best[1]:
+            best = (ind, ind.fitness)
 
+    return best[0]
 
-def fitness(Individ, function):
-    return  function(Individ.x)  # предварительно
