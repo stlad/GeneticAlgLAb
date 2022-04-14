@@ -4,6 +4,9 @@ import math_lib as ml
 import matplotlib.pyplot as plt
 import math
 import functions
+import csv_module as csvm
+
+
 
 def create_model():
     print('Введите параметры модели:')
@@ -65,19 +68,31 @@ def print_model_generaiton(model):
     print('-----------------------------')
 
 
+def save_model_generation(model):
+    for ind in model.current_population:
+        csvm.history.append({
+            'gene': ind.gene,
+            'index': ml.grey_to_num(ind.gene),
+            'global_X': ml.gene_to_global_coords(m, ind.gene),
+            'phenotype': ind.fitness,
+            'generation': model.generation_number
+        })
+
 
 m = create_model()
-m.get_start_population()
-draw_graph(m)
-print_model_generaiton(m)
+#m.get_start_population()
+#draw_graph(m)
+#print_model_generaiton(m)
 
 for i in range(5):
     m.next()
     draw_graph(m)
     print_model_generaiton(m)
+    save_model_generation(m)
 
-
-
+print('Название файла:', end='')
+fn = input()
+csvm.save_csv(fn)
 
 
 print('------------')
