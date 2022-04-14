@@ -13,7 +13,7 @@ class Model:
         self.grid_step = (interval[1] - interval[0])/(2**grid_count)
         self.PR_CROSSOVER = 0.5
         self.PR_MUTATION = 0.1
-        self.generation_number = 1
+        self.generation_number = 0
 
     def get_start_population(self):
         #self.current_population = [Individ(i,self.function(i)) for i in range(self.population_count)] # предварительно
@@ -32,6 +32,10 @@ class Model:
             self.current_population.append(ind)
 
     def next(self):
+        if self.generation_number ==0:
+            self.get_start_population()
+            self.generation_number = 1
+            return
         next_generation = []
         next_generation = self.selection(3)
         next_generation = self.crossover(next_generation)
