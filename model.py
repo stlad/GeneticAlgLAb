@@ -1,6 +1,8 @@
 import random
 import math_lib as ml
 import copy
+from statistics import mean
+
 
 class Model:
     def __init__(self, pop_count, grid_count, func, interval):
@@ -14,22 +16,21 @@ class Model:
         self.PR_CROSSOVER = 0.5
         self.PR_MUTATION = 0.1
         self.generation_number = 0
+        self.avg_fitness_in_gen = []
 
     def get_start_population(self):
         #self.current_population = [Individ(i,self.function(i)) for i in range(self.population_count)] # предварительно
+        avg_fits = []
         for i in range(self.population_count):
             x = random.randint(0,2**self.grid_count-1)
-            '''global_x = ml.grid_index_to_global(self, x)
 
-            ind_x = self.grey_nums[x]
-            ind_y = self.function(global_x)
-
-            self.current_population.append(Individ(ind_x, ind_y))'''
             ind_gene = self.grey_nums[x]
             ind = Individ(ind_gene)
             ind.make_func(self)
-
+            avg_fits.append(ind.fitness)
             self.current_population.append(ind)
+        self.avg_fitness_in_gen.append(mean(avg_fits))
+
 
     def next(self):
         if self.generation_number ==0:
@@ -41,9 +42,13 @@ class Model:
         next_generation = self.crossover(next_generation)
         self.mutation(next_generation)
 
+        fit_avg = []
+
         for i in next_generation:
             i.make_func(self)
+            fit_avg.append(i.fitness)
 
+        self.avg_fitness_in_gen.append(mean(fit_avg))
         self.generation_number += 1
 
         self.current_population = next_generation
@@ -64,14 +69,19 @@ class Model:
     def crossover(self, pop):
         for child1, child2 in list(zip(pop[::2], pop[1::2])):
             if random.random() < self.PR_CROSSOVER:
+                print(f'Скрещивание: гены {child1.gene}, {child2.gene} -> ', end='')
                 child1, child2 = ml.cross_individs(self, child1, child2)
+                print(f'{child1.gene}, {child2.gene}')
 
         return pop
 
     def mutation(self, pop):
         for mutant in pop:
             if random.random() < self.PR_MUTATION:
+                print(f'Мутация: ген {mutant.gene} -> ген ', end='')
                 ml.mutate(self, mutant)
+                print(f'{mutant.gene}')
+
         return
 
 
