@@ -78,17 +78,27 @@ def save_model_generation(model):
             'generation': model.generation_number
         })
 
+def draw_stats(model):
+    x = [i for i in range(1,model.generation_number+1)]
+    y = [fit for fit in model.avg_fitness_in_gen]
+
+    plt.grid()
+    plt.plot(x,y)
+    plt.scatter(x,y)
+    plt.xlabel('Номер поколения')
+    plt.ylabel('Среднее значение минимума ф-ии')
+    plt.show()
 
 m = create_model()
-#m.get_start_population()
-#draw_graph(m)
-#print_model_generaiton(m)
 
-for i in range(5):
+print('Введите макс. вол-во поколений:', end='')
+for i in range(int(input())):
     m.next()
     draw_graph(m)
     print_model_generaiton(m)
     save_model_generation(m)
+
+draw_stats(m)
 
 print('Название файла:', end='')
 fn = input()
