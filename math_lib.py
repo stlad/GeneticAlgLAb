@@ -63,4 +63,3 @@ def mutate(model, ind):
     ind.gene = mutated_gene
     return
 
-
